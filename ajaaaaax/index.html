@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Star Wars API</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <section class="form-wrapper">
+      <form class="search-form">
+        <input type="text" class="search" placeholder="Название планеты" title="Поле ввода" />
+        <ul class="suggestions">
+          <li>Загрузка...</li>
+        </ul>
+      </form>
+    </section>
+
+    <div class="info">
+      <ul class="info__list"></ul>
+    </div>
+
+    <script>
+      const endpoint = 'https://swapi.dev/api/planets/';
+      const list = document.querySelector('.suggestions');
+      const field = document.querySelector('input');
+      const overlay = document.querySelector('.info');
+      const infoList = document.querySelector('.info__list');
+      const listForFilms = document.createElement('ul');
+      const listForResidents = document.createElement('ul');
+
+      const intl = new Intl.NumberFormat('ru-RU');
+
+      field.addEventListener('input', search);
+
+      getResource(endpoint).then((data) => {
+        list.removeChild(list.firstElementChild);
+        data.results.forEach((planet) => {
+          render(planet);
+        });
+      });
+
+      function search(e) {
+        const li = document.querySelectorAll(`li`);
+        const listItems = document.querySelectorAll(`li > span:first-child`);
+        const value = e.target.value.trim().toLowerCase();
+        if (value !== '') {
+          listItems.forEach((elem, index) => {
+            const item = elem.innerText.toLowerCase();
+            if (item.search(value) === -1) {
+              elem.innerHTML = elem.innerText;
+              li[index].style.display = 'none';
+            } else {
+              li[index].style.display = 'flex';
+              let str = elem.innerText;
+              elem.innerHTML = insertMark(str, item.search(value), value.length);
+            }
+          });
+        } else {
+          listItems.forEach((elem, index) => {
+            li[index].style.display = 'flex';
+            elem.innerHTML = elem.innerText;
+          });
+        }
+      }
+
+      function insertMark(str, pos, len) {
+        return (
+          str.slice(0, pos) +
+          '<mark>' +
+          str.slice(pos, pos + len) +
+          '</mark>' +
+          str.slice(pos + len)
+        );
+      }
+
+      async function getResource(url) {
+        let res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+
+        return await res.json();
+      }
+
+      function render(planet) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<span>${planet.name || 'no data :('}</span>
+        <span>${planet.population || 'no data :('}</span>`;
+        list.appendChild(listItem);
+
+        listItem.addEventListener('click', () => renderAllInfo(planet));
+
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) overlay.classList.remove('active');
+          listForResidents.innerHTML = '';
+          listForFilms.innerHTML = '';
+        });
+      }
+
+      function renderAllInfo(planet) {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        infoList.innerHTML = `
+          <li>climate: ${planet.climate}</li>
+          <li>created: ${planet.created}</li>
+          <li>diameter: ${planet.diameter}</li>
+          <li>edited: ${planet.edited}</li>
+          <li>gravity: ${planet.gravity}</li>
+          <li>name: ${planet.name}</li>
+          <li>orbital_period: ${planet.orbital_period}</li>
+          <li>population: ${planet.population}</li>
+          <li>rotation_period: ${planet.rotation_period}</li>
+          <li>surface_water: ${planet.surface_water}</li>
+          <li>terrain: ${planet.terrain}</li>
+          <li>url: ${planet.url}</li>
+          <li><ul class="info__film"> ${
+            planet.films.forEach((film) => {
+              getResource(film).then((data) => {
+                renderFilms(data.title, '.info__film', 'films: ');
+              });
+            }) || 'Загрузка...'
+          } </ul></li>
+          <li> <ul class="info__residents"> ${
+            planet.residents.forEach((resident) => {
+              getResource(resident).then((data) =>
+                renderResidents(data.name, '.info__residents', 'residents: '),
+              );
+            }) || 'Загрузка...'
+          } </ul></li> 
+          `;
+      }
+
+      function renderFilms(data, mainClass, text) {
+        if (!data) return (mainList.innerText = 'no data :(');
+        const listItem = document.createElement('li');
+        const mainList = document.querySelector(mainClass);
+        mainList.innerText = text;
+        mainList.append(listForFilms);
+        listItem.innerHTML = data;
+        listForFilms.append(listItem);
+      }
+
+      function renderResidents(data, mainClass, text) {
+        if (!data) return (mainList.innerText = 'no data :(');
+        const listItem = document.createElement('li');
+        const mainList = document.querySelector(mainClass);
+        mainList.innerText = text;
+        mainList.append(listForResidents);
+        listItem.innerHTML = data;
+        listForResidents.append(listItem);
+      }
+    </script>
+  </body>
+</html>

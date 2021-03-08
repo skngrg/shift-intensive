@@ -1,0 +1,93 @@
+/* ----------------------     Задание 1     ----------------------------------*/
+.block-wrapper{
+  display: flex;
+  flex-direction: column-reverse;
+}
+.block {
+  font-size: 32px;
+  background: var(--rainbow-gradient);
+  border-radius: 10px;
+  text-align: center;
+  padding: 16px;
+  margin-top: 16px;
+}
+/* ----------------------     Задание 2     ----------------------------------*/
+.note {
+  background-color: var(--yellow);
+  border: 1px solid var(--tomato);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.layer {
+  float: left;
+  width: 40%;
+}
+
+.spacer {
+  clear: left;
+}
+/* ----------------------     Задание 3     ----------------------------------*/
+.item-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  height: 70px;
+  overflow: hidden;
+}
+
+.item {
+  padding: 16px;
+  margin-top: 16px;
+  border: 1px solid var(--tomato);
+  border-radius: 10px;
+  background-color: var(--yellow);
+  text-align: center;
+}
+/* ----------------------     Конец     ----------------------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+  --yellow: #ffc600;
+  --tomato: #FF6347;
+  --black: #272727;
+  --rainbow-gradient: linear-gradient(to right, orange , yellow, green, cyan, blue, violet);
+}
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: var(--black);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
+}
+
+body {
+  background-image: url("assets/img/o-o.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+h2 {
+  color: springgreen;
+  margin: 0 0 5px 0;
+}
